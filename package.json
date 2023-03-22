@@ -18,12 +18,17 @@
     "watch": "npx projen watch",
     "projen": "npx projen"
   },
+  "author": {
+    "name": "DevOps@Home",
+    "url": "https://devops-at-ho.me",
+    "organization": false
+  },
   "devDependencies": {
     "@types/jest": "^29.5.0",
-    "@types/node": "^14",
+    "@types/node": "^16",
     "cdk8s-cli": "^2.0.28",
     "jest": "^29.5.0",
-    "jest-junit": "^13",
+    "jest-junit": "^15",
     "npm-check-updates": "^16",
     "prettier": "^2.8.6",
     "projen": "^0.69.4",
@@ -36,7 +41,7 @@
     "cdk8s-plus-22": "^2.0.0-rc.26",
     "constructs": "^10.1.42"
   },
-  "license": "Apache-2.0",
+  "license": "UNLICENSED",
   "version": "0.0.0",
   "jest": {
     "testMatch": [
