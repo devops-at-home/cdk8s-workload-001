@@ -3,4 +3,4 @@
 language: typescript
 app: node lib/main.js
 imports:
-  - k8s
+  - k8s@1.25.0

@@ -37,7 +37,7 @@
     "typescript": "^5.0.2"
   },
   "dependencies": {
-    "cdk8s": "^2.3.33",
+    "cdk8s": "^2.7.41",
     "cdk8s-plus-22": "^2.0.0-rc.26",
     "constructs": "^10.1.42"
   },
