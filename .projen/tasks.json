@@ -134,6 +134,22 @@
       "name": "pre-compile",
       "description": "Prepare the project for compilation"
     },
+    "refresh-imports:crd": {
+      "name": "refresh-imports:crd",
+      "steps": [
+        {
+          "exec": "cdk8s import crds.json -o src/imports"
+        }
+      ]
+    },
+    "refresh-imports:k8s": {
+      "name": "refresh-imports:k8s",
+      "steps": [
+        {
+          "exec": "cdk8s import k8s@1.25.0 -o src/imports"
+        }
+      ]
+    },
     "synth": {
       "name": "synth",
       "description": "Synthesizes your cdk8s app into dist (part of \"yarn build\")",

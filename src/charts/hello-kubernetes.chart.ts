@@ -1,12 +1,7 @@
 import { Construct } from 'constructs';
 import { Chart, ChartProps } from 'cdk8s';
 import { ImagePullPolicy, Protocol } from 'cdk8s-plus-22/lib/container';
-import {
-    IntOrString,
-    KubeDeployment,
-    KubeService,
-    KubeServiceAccount,
-} from '../../lib/imports/k8s';
+import { IntOrString, KubeDeployment, KubeService, KubeServiceAccount } from '../imports/k8s';
 import { HttpIngressPathType, ServiceType } from 'cdk8s-plus-22';
 import { KubeIngress } from 'cdk8s-plus-22/lib/imports/k8s';
 

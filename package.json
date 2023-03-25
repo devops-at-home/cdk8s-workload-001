@@ -11,6 +11,8 @@
     "post-compile": "npx projen post-compile",
     "post-upgrade": "npx projen post-upgrade",
     "pre-compile": "npx projen pre-compile",
+    "refresh-imports:crd": "npx projen refresh-imports:crd",
+    "refresh-imports:k8s": "npx projen refresh-imports:k8s",
     "synth": "npx projen synth",
     "test": "npx projen test",
     "test:watch": "npx projen test:watch",
@@ -45,7 +47,8 @@
   "version": "0.0.0",
   "jest": {
     "coveragePathIgnorePatterns": [
-      "/lib/imports/"
+      "/lib/imports/",
+      "/src/imports/"
     ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.ts?(x)",

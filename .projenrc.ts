@@ -18,16 +18,19 @@ const project = new cdk8s.Cdk8sTypeScriptApp({
     githubOptions: {
         pullRequestLint: false,
     },
-    gitignore: ['.idea'],
+    gitignore: ['.idea', 'crds.json'],
     projenrcTs: true,
     licensed: false,
     k8sSpecVersion: '1.25.0',
     jestOptions: {
         jestConfig: {
-            coveragePathIgnorePatterns: ['/lib/imports/'],
+            coveragePathIgnorePatterns: ['/lib/imports/', '/src/imports/'],
         },
     },
-    cdk8sImports: ['crds.json'],
+    scripts: {
+        'refresh-imports:k8s': 'cdk8s import k8s@1.25.0 -o src/imports',
+        'refresh-imports:crd': 'cdk8s import crds.json -o src/imports',
+    },
 
     // cdk8sPlus: true,
     // cdk8sPlusVersion: '2.2.9',

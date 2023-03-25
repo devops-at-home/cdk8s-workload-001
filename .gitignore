@@ -29,6 +29,7 @@ jspm_packages/
 .yarn-integrity
 .cache
 .idea
+crds.json
 !/.projenrc.js
 /test-reports/
 junit.xml
