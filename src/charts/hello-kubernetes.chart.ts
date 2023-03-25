@@ -16,6 +16,7 @@ export type HelloKubernetesConfig = {
     image: string;
     message: string;
     sslRedirect: boolean;
+    host: string;
 };
 
 interface HelloKubernetesProps extends ChartProps, Partial<HelloKubernetesConfig> {}
@@ -24,7 +25,7 @@ export class HelloKubernetes extends Chart {
     constructor(scope: Construct, id: string, props: HelloKubernetesProps = {}) {
         super(scope, id, props);
 
-        const { name, containerPort, image, message, sslRedirect } = parseInputs(props);
+        const { name, containerPort, image, message, sslRedirect, host } = parseInputs(props);
 
         const labels = { 'app.kubernetes.io/name': name };
 
@@ -101,7 +102,7 @@ export class HelloKubernetes extends Chart {
                                         name: 'KUBERNETES_NODE_NAME',
                                         valueFrom: {
                                             fieldRef: {
-                                                fieldPath: 'metadata.nodeName',
+                                                fieldPath: 'spec.nodeName',
                                             },
                                         },
                                     },
@@ -135,7 +136,8 @@ export class HelloKubernetes extends Chart {
             metadata: {
                 ...metadata,
                 annotations: {
-                    'ingress.kubernetes.io/ssl-redirect': `${sslRedirect}`,
+                    'kubernetes.io/ingress.class': 'traefik',
+                    'traefik.ingress.kubernetes.io/router.tls': `${sslRedirect}`,
                 },
             },
             spec: {
@@ -153,9 +155,11 @@ export class HelloKubernetes extends Chart {
                                             },
                                         },
                                     },
+                                    path: '/',
                                 },
                             ],
                         },
+                        host,
                     },
                 ],
             },
@@ -170,5 +174,6 @@ export const parseInputs = (props: Partial<HelloKubernetesConfig>): HelloKuberne
         image: props.image ?? 'paulbouwer/hello-kubernetes:1.10.1',
         message: props.message ?? 'Message goes here',
         sslRedirect: props.sslRedirect ?? false,
+        host: props.host ?? 'test.h6020-001.devops-at-ho.me',
     };
 };

@@ -23,6 +23,7 @@ describe('Unit tests', () => {
         expect(response.message).toStrictEqual('Message goes here');
         expect(response.name).toStrictEqual('hello-kubernetes');
         expect(response.sslRedirect).toStrictEqual(false);
+        expect(response.host).toStrictEqual('test.h6020-001.devops-at-ho.me');
     });
 
     test('parseInputs function with inputs', () => {
@@ -32,6 +33,7 @@ describe('Unit tests', () => {
             message: 'some message',
             name: 'some name',
             sslRedirect: true,
+            host: 'some host',
         };
 
         const response = parseInputs(inputs);
@@ -40,5 +42,6 @@ describe('Unit tests', () => {
         expect(response.message).toStrictEqual(inputs.message);
         expect(response.name).toStrictEqual(inputs.name);
         expect(response.sslRedirect).toStrictEqual(inputs.sslRedirect);
+        expect(response.host).toStrictEqual(inputs.host);
     });
 });

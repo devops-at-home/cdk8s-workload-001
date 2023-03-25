@@ -97,7 +97,7 @@ HelloKubernetes {
                         "name": "KUBERNETES_NODE_NAME",
                         "valueFrom": {
                           "fieldRef": {
-                            "fieldPath": "metadata.nodeName",
+                            "fieldPath": "spec.nodeName",
                           },
                         },
                       },
@@ -151,7 +151,8 @@ HelloKubernetes {
         "metadata": ApiObjectMetadataDefinition {
           "_additionalAttributes": {
             "annotations": {
-              "ingress.kubernetes.io/ssl-redirect": "false",
+              "kubernetes.io/ingress.class": "traefik",
+              "traefik.ingress.kubernetes.io/router.tls": "false",
             },
             "labels": {
               "app.kubernetes.io/name": "hello-kubernetes",
@@ -160,7 +161,8 @@ HelloKubernetes {
             "namespace": undefined,
           },
           "annotations": {
-            "ingress.kubernetes.io/ssl-redirect": "false",
+            "kubernetes.io/ingress.class": "traefik",
+            "traefik.ingress.kubernetes.io/router.tls": "false",
           },
           "finalizers": [],
           "labels": {
@@ -188,7 +190,8 @@ HelloKubernetes {
           "kind": "Ingress",
           "metadata": {
             "annotations": {
-              "ingress.kubernetes.io/ssl-redirect": "false",
+              "kubernetes.io/ingress.class": "traefik",
+              "traefik.ingress.kubernetes.io/router.tls": "false",
             },
             "labels": {
               "app.kubernetes.io/name": "hello-kubernetes",
@@ -198,6 +201,7 @@ HelloKubernetes {
           "spec": {
             "rules": [
               {
+                "host": "test.h6020-001.devops-at-ho.me",
                 "http": {
                   "paths": [
                     {
@@ -209,6 +213,7 @@ HelloKubernetes {
                           },
                         },
                       },
+                      "path": "/",
                       "pathType": "Prefix",
                     },
                   ],
