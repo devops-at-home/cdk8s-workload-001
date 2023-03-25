@@ -110,7 +110,7 @@ HelloKubernetes {
                     "imagePullPolicy": "IfNotPresent",
                     "livenessProbe": {
                       "httpGet": {
-                        "port": {
+                        "port": IntOrString {
                           "value": 8080,
                         },
                       },
@@ -125,7 +125,7 @@ HelloKubernetes {
                     ],
                     "readinessProbe": {
                       "httpGet": {
-                        "port": {
+                        "port": IntOrString {
                           "value": 8080,
                         },
                       },
@@ -135,6 +135,86 @@ HelloKubernetes {
                 "serviceAccountName": "hello-kubernetes",
               },
             },
+          },
+        },
+        Symbol(@aws-cdk/core.DependableTrait): {
+          "dependencyRoots": [
+            [Circular],
+          ],
+        },
+      },
+      "ingress": KubeIngress {
+        "apiGroup": "networking.k8s.io",
+        "apiVersion": "networking.k8s.io/v1",
+        "chart": [Circular],
+        "kind": "Ingress",
+        "metadata": ApiObjectMetadataDefinition {
+          "_additionalAttributes": {
+            "annotations": {
+              "ingress.kubernetes.io/ssl-redirect": "false",
+            },
+            "labels": {
+              "app.kubernetes.io/name": "hello-kubernetes",
+            },
+            "name": "hello-kubernetes",
+            "namespace": undefined,
+          },
+          "annotations": {
+            "ingress.kubernetes.io/ssl-redirect": "false",
+          },
+          "finalizers": [],
+          "labels": {
+            "app.kubernetes.io/name": "hello-kubernetes",
+          },
+          "name": "hello-kubernetes",
+          "namespace": undefined,
+          "ownerReferences": [],
+        },
+        "name": "hello-kubernetes",
+        "node": Node {
+          "_children": {},
+          "_context": {},
+          "_dependencies": Set {},
+          "_locked": false,
+          "_metadata": [],
+          "_validations": [],
+          "host": [Circular],
+          "id": "ingress",
+          "scope": [Circular],
+        },
+        "patches": [],
+        "props": {
+          "apiVersion": "networking.k8s.io/v1",
+          "kind": "Ingress",
+          "metadata": {
+            "annotations": {
+              "ingress.kubernetes.io/ssl-redirect": "false",
+            },
+            "labels": {
+              "app.kubernetes.io/name": "hello-kubernetes",
+            },
+            "name": "hello-kubernetes",
+          },
+          "spec": {
+            "rules": [
+              {
+                "http": {
+                  "paths": [
+                    {
+                      "backend": {
+                        "service": {
+                          "name": "hello-kubernetes",
+                          "port": {
+                            "number": 8080,
+                          },
+                        },
+                      },
+                      "pathType": "Prefix",
+                    },
+                  ],
+                },
+              },
+            ],
           },
         },
         Symbol(@aws-cdk/core.DependableTrait): {

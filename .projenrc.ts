@@ -27,9 +27,10 @@ const project = new cdk8s.Cdk8sTypeScriptApp({
             coveragePathIgnorePatterns: ['/lib/imports/'],
         },
     },
+    cdk8sImports: ['crds.json'],
+
     // cdk8sPlus: true,
     // cdk8sPlusVersion: '2.2.9',
-    // cdk8sImports: []
 
     // deps: [],                /* Runtime dependencies of this module. */
     // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
