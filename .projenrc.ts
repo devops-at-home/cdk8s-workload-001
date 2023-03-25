@@ -22,7 +22,12 @@ const project = new cdk8s.Cdk8sTypeScriptApp({
     projenrcTs: true,
     licensed: false,
     k8sSpecVersion: '1.25.0',
-    cdk8sPlus: true,
+    jestOptions: {
+        jestConfig: {
+            coveragePathIgnorePatterns: ['/lib/imports/'],
+        },
+    },
+    // cdk8sPlus: true,
     // cdk8sPlusVersion: '2.2.9',
     // cdk8sImports: []
 
@@ -31,5 +36,7 @@ const project = new cdk8s.Cdk8sTypeScriptApp({
     // devDeps: [],             /* Build dependencies for this module. */
     // packageName: undefined,  /* The "name" in package.json. */
 });
+
+project.jest!.addTestMatch('**/?(*.)@(spec|test).[tj]s?(x)');
 
 project.synth();
