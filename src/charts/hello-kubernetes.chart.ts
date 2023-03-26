@@ -4,6 +4,11 @@ import { ImagePullPolicy, Protocol } from 'cdk8s-plus-22/lib/container';
 import { IntOrString, KubeDeployment, KubeService, KubeServiceAccount } from '../imports/k8s';
 import { HttpIngressPathType, ServiceType } from 'cdk8s-plus-22';
 import { KubeIngress } from 'cdk8s-plus-22/lib/imports/k8s';
+import {
+    ExternalSecret,
+    SecretStore,
+    SecretStoreSpecProviderAwsService,
+} from '../imports/external-secrets.io';
 
 export type HelloKubernetesConfig = {
     name: string;
@@ -20,7 +25,7 @@ export class HelloKubernetes extends Chart {
     constructor(scope: Construct, id: string, props: HelloKubernetesProps = {}) {
         super(scope, id, props);
 
-        const { name, containerPort, image, message, sslRedirect, host } = parseInputs(props);
+        const { name, containerPort, image, sslRedirect, host } = parseInputs(props);
 
         const labels = { 'app.kubernetes.io/name': name };
 
@@ -32,6 +37,59 @@ export class HelloKubernetes extends Chart {
         const selector = {
             matchLabels: labels,
         };
+
+        new SecretStore(this, 'secret-store', {
+            metadata,
+            spec: {
+                provider: {
+                    aws: {
+                        region: 'ap-southeast-2',
+                        service: SecretStoreSpecProviderAwsService.PARAMETER_STORE,
+                        auth: {
+                            secretRef: {
+                                accessKeyIdSecretRef: {
+                                    name: 'ssm-role',
+                                    key: 'access-key',
+                                },
+                                secretAccessKeySecretRef: {
+                                    name: 'ssm-role',
+                                    key: 'secret-access-key',
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        const secret = new ExternalSecret(this, 'secret', {
+            metadata,
+            spec: {
+                secretStoreRef: {
+                    name,
+                    kind: 'SecretStore',
+                },
+                target: {
+                    name,
+                },
+                data: [
+                    {
+                        secretKey: 'secret-key-to-be-managed',
+                        remoteRef: {
+                            key: 'provider-key',
+                            version: 'provider-key-version',
+                            property: 'provider-key-property',
+                        },
+                    },
+                ],
+                dataFrom: [
+                    {
+                        key: 'remote-key-in-the-provider',
+                    },
+                ],
+                refreshInterval: '999h',
+            },
+        });
 
         const serviceAccount = new KubeServiceAccount(this, 'serviceAccount', {
             metadata,
@@ -75,7 +133,12 @@ export class HelloKubernetes extends Chart {
                                     },
                                     {
                                         name: 'MESSAGE',
-                                        value: message,
+                                        valueFrom: {
+                                            secretKeyRef: {
+                                                key: secret.name,
+                                                name: '',
+                                            },
+                                        },
                                     },
                                     {
                                         name: 'KUBERNETES_NAMESPACE',
