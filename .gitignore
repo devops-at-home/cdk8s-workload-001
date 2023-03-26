@@ -30,6 +30,7 @@ jspm_packages/
 .cache
 .idea
 crds.json
+deploy.sh
 !/.projenrc.js
 /test-reports/
 junit.xml

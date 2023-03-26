@@ -18,7 +18,7 @@ const project = new cdk8s.Cdk8sTypeScriptApp({
     githubOptions: {
         pullRequestLint: false,
     },
-    gitignore: ['.idea', 'crds.json'],
+    gitignore: ['.idea', 'crds.json', 'deploy.sh'],
     projenrcTs: true,
     licensed: false,
     k8sSpecVersion: '1.25.0',
