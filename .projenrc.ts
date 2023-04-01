@@ -28,7 +28,7 @@ const project = new cdk8s.Cdk8sTypeScriptApp({
         },
     },
     scripts: {
-        'refresh-imports:k8s': 'cdk8s import k8s@1.25.0 -o src/imports',
+        'refresh-imports:k8s': 'cdk8s import k8s@1.26.0 -o src/imports',
         'refresh-imports:crd': 'cdk8s import crds.json -o src/imports',
     },
 
