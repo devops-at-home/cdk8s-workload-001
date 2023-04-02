@@ -14,7 +14,6 @@ export type HelloKubernetesConfig = {
     name: string;
     containerPort: number;
     image: string;
-    message: string;
     sslRedirect: boolean;
     host: string;
 };
@@ -48,11 +47,11 @@ export class HelloKubernetes extends Chart {
                         auth: {
                             secretRef: {
                                 accessKeyIdSecretRef: {
-                                    name: 'ssm-role',
+                                    name: 'awssm-secret',
                                     key: 'access-key',
                                 },
                                 secretAccessKeySecretRef: {
-                                    name: 'ssm-role',
+                                    name: 'awssm-secret',
                                     key: 'secret-access-key',
                                 },
                             },
@@ -62,7 +61,7 @@ export class HelloKubernetes extends Chart {
             },
         });
 
-        const secret = new ExternalSecret(this, 'secret', {
+        new ExternalSecret(this, 'secret', {
             metadata,
             spec: {
                 secretStoreRef: {
@@ -74,19 +73,19 @@ export class HelloKubernetes extends Chart {
                 },
                 data: [
                     {
-                        secretKey: 'secret-key-to-be-managed',
+                        secretKey: 'MESSAGE',
                         remoteRef: {
-                            key: 'provider-key',
-                            version: 'provider-key-version',
-                            property: 'provider-key-property',
+                            key: 'MESSAGE',
+                            // version: 'provider-key-version',
+                            // property: 'provider-key-property',
                         },
                     },
                 ],
-                dataFrom: [
-                    {
-                        key: 'remote-key-in-the-provider',
-                    },
-                ],
+                // dataFrom: [
+                //     {
+                //         key: 'MESSAGE',
+                //     },
+                // ],
                 refreshInterval: '999h',
             },
         });
@@ -135,8 +134,8 @@ export class HelloKubernetes extends Chart {
                                         name: 'MESSAGE',
                                         valueFrom: {
                                             secretKeyRef: {
-                                                key: secret.name,
-                                                name: '',
+                                                key: 'MESSAGE',
+                                                name,
                                             },
                                         },
                                     },
@@ -230,7 +229,6 @@ export const parseInputs = (props: Partial<HelloKubernetesConfig>): HelloKuberne
         name: props.name ?? 'hello-kubernetes',
         containerPort: props.containerPort ?? 8080,
         image: props.image ?? 'paulbouwer/hello-kubernetes:1.10.1',
-        message: props.message ?? 'Message goes here',
         sslRedirect: props.sslRedirect ?? false,
         host: props.host ?? 'test.h6020-001.devops-at-ho.me',
     };

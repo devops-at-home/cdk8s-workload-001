@@ -75,7 +75,12 @@ HelloKubernetes {
                       },
                       {
                         "name": "MESSAGE",
-                        "value": "Message goes here",
+                        "valueFrom": {
+                          "secretKeyRef": {
+                            "key": "MESSAGE",
+                            "name": "hello-kubernetes",
+                          },
+                        },
                       },
                       {
                         "name": "KUBERNETES_NAMESPACE",
@@ -220,6 +225,146 @@ HelloKubernetes {
                 },
               },
             ],
+          },
+        },
+        Symbol(@aws-cdk/core.DependableTrait): {
+          "dependencyRoots": [
+            [Circular],
+          ],
+        },
+      },
+      "secret": ExternalSecret {
+        "apiGroup": "external-secrets.io",
+        "apiVersion": "external-secrets.io/v1alpha1",
+        "chart": [Circular],
+        "kind": "ExternalSecret",
+        "metadata": ApiObjectMetadataDefinition {
+          "_additionalAttributes": {
+            "labels": {
+              "app.kubernetes.io/name": "hello-kubernetes",
+            },
+            "name": "hello-kubernetes",
+            "namespace": undefined,
+          },
+          "annotations": {},
+          "finalizers": [],
+          "labels": {
+            "app.kubernetes.io/name": "hello-kubernetes",
+          },
+          "name": "hello-kubernetes",
+          "namespace": undefined,
+          "ownerReferences": [],
+        },
+        "name": "hello-kubernetes",
+        "node": Node {
+          "_children": {},
+          "_context": {},
+          "_dependencies": Set {},
+          "_locked": false,
+          "_metadata": [],
+          "_validations": [],
+          "host": [Circular],
+          "id": "secret",
+          "scope": [Circular],
+        },
+        "patches": [],
+        "props": {
+          "apiVersion": "external-secrets.io/v1alpha1",
+          "kind": "ExternalSecret",
+          "metadata": {
+            "labels": {
+              "app.kubernetes.io/name": "hello-kubernetes",
+            },
+            "name": "hello-kubernetes",
+          },
+          "spec": {
+            "data": [
+              {
+                "remoteRef": {
+                  "key": "MESSAGE",
+                },
+                "secretKey": "MESSAGE",
+              },
+            ],
+            "refreshInterval": "999h",
+            "secretStoreRef": {
+              "kind": "SecretStore",
+              "name": "hello-kubernetes",
+            },
+            "target": {
+              "name": "hello-kubernetes",
+            },
+          },
+        },
+        Symbol(@aws-cdk/core.DependableTrait): {
+          "dependencyRoots": [
+            [Circular],
+          ],
+        },
+      },
+      "secret-store": SecretStore {
+        "apiGroup": "external-secrets.io",
+        "apiVersion": "external-secrets.io/v1alpha1",
+        "chart": [Circular],
+        "kind": "SecretStore",
+        "metadata": ApiObjectMetadataDefinition {
+          "_additionalAttributes": {
+            "labels": {
+              "app.kubernetes.io/name": "hello-kubernetes",
+            },
+            "name": "hello-kubernetes",
+            "namespace": undefined,
+          },
+          "annotations": {},
+          "finalizers": [],
+          "labels": {
+            "app.kubernetes.io/name": "hello-kubernetes",
+          },
+          "name": "hello-kubernetes",
+          "namespace": undefined,
+          "ownerReferences": [],
+        },
+        "name": "hello-kubernetes",
+        "node": Node {
+          "_children": {},
+          "_context": {},
+          "_dependencies": Set {},
+          "_locked": false,
+          "_metadata": [],
+          "_validations": [],
+          "host": [Circular],
+          "id": "secret-store",
+          "scope": [Circular],
+        },
+        "patches": [],
+        "props": {
+          "apiVersion": "external-secrets.io/v1alpha1",
+          "kind": "SecretStore",
+          "metadata": {
+            "labels": {
+              "app.kubernetes.io/name": "hello-kubernetes",
+            },
+            "name": "hello-kubernetes",
+          },
+          "spec": {
+            "provider": {
+              "aws": {
+                "auth": {
+                  "secretRef": {
+                    "accessKeyIdSecretRef": {
+                      "key": "access-key",
+                      "name": "awssm-secret",
+                    },
+                    "secretAccessKeySecretRef": {
+                      "key": "secret-access-key",
+                      "name": "awssm-secret",
+                    },
+                  },
+                },
+                "region": "ap-southeast-2",
+                "service": "ParameterStore",
+              },
+            },
           },
         },
         Symbol(@aws-cdk/core.DependableTrait): {

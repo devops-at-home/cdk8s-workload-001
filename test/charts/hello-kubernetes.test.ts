@@ -20,7 +20,6 @@ describe('Unit tests', () => {
         const response = parseInputs({});
         expect(response.containerPort).toStrictEqual(8080);
         expect(response.image).toStrictEqual('paulbouwer/hello-kubernetes:1.10.1');
-        expect(response.message).toStrictEqual('Message goes here');
         expect(response.name).toStrictEqual('hello-kubernetes');
         expect(response.sslRedirect).toStrictEqual(false);
         expect(response.host).toStrictEqual('test.h6020-001.devops-at-ho.me');
@@ -30,7 +29,6 @@ describe('Unit tests', () => {
         const inputs: HelloKubernetesConfig = {
             containerPort: 8081,
             image: 'some image',
-            message: 'some message',
             name: 'some name',
             sslRedirect: true,
             host: 'some host',
@@ -39,7 +37,6 @@ describe('Unit tests', () => {
         const response = parseInputs(inputs);
         expect(response.containerPort).toStrictEqual(inputs.containerPort);
         expect(response.image).toStrictEqual(inputs.image);
-        expect(response.message).toStrictEqual(inputs.message);
         expect(response.name).toStrictEqual(inputs.name);
         expect(response.sslRedirect).toStrictEqual(inputs.sslRedirect);
         expect(response.host).toStrictEqual(inputs.host);
