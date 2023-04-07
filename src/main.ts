@@ -6,7 +6,7 @@ const app = new App();
 
 new HelloKubernetes(app, 'Chart-HelloKubernetes');
 
-new CertManagerWebhookExternalDns(app, 'chart-CertManagerWebhookExternalDns', {
+new CertManagerWebhookExternalDns(app, 'Chart-CertManagerWebhookExternalDns', {
     namespace: 'cert-manager',
     domain: process.env.DOMAIN,
 });
