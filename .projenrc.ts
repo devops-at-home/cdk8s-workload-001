@@ -3,7 +3,7 @@ import { cdk8s } from 'projen';
 const project = new cdk8s.Cdk8sTypeScriptApp({
     authorName: 'DevOps@Home',
     authorUrl: 'https://devops-at-ho.me',
-    cdk8sVersion: '2.7.41',
+    cdk8sVersion: '2.7.52',
     defaultReleaseBranch: 'main',
     eslint: false,
     name: 'cdk8s-workload-001',
@@ -21,7 +21,6 @@ const project = new cdk8s.Cdk8sTypeScriptApp({
     gitignore: ['.idea', 'crds.json', 'deploy.sh'],
     projenrcTs: true,
     licensed: false,
-    k8sSpecVersion: '1.25.0',
     jestOptions: {
         jestConfig: {
             coveragePathIgnorePatterns: ['/lib/imports/', '/src/imports/'],
