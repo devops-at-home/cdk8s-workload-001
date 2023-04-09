@@ -5,7 +5,7 @@ import {
     parseInputs,
 } from '../../src/charts/cert-manager-webhook-externaldns.chart';
 
-const chart = 'cert-mnager-webhook-external-dns';
+const chart = 'cert-manager-webhook-external-dns';
 
 describe(chart, () => {
     test('Snapshot test', () => {
@@ -14,7 +14,7 @@ describe(chart, () => {
         const manifest = new CertManagerWebhookExternalDns(app, chart, {
             namespace: 'cert-manager',
             labels: {
-                chart,
+                chart: 'externaldns-webhook',
             },
         });
 

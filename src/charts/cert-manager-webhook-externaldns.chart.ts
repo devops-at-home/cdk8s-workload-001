@@ -51,7 +51,7 @@ export class CertManagerWebhookExternalDns extends Chart {
             metadata: {
                 name: `v1alpha1.${domain}`,
                 annotations: {
-                    'cert-manager.io/inject-ca-from': 'cert-manager/externaldns-webhook-tls',
+                    'cert-manager.io/inject-ca-from': `${this.namespace!}/${name}-tls`,
                 },
             },
             spec: {
@@ -65,7 +65,7 @@ export class CertManagerWebhookExternalDns extends Chart {
 
         // Create a selfsigned Issuer, in order to create a root CA certificate for
         // signing webhook serving certificates
-        const issuerSelfsign = new Issuer(this, 'issuer-webhook-selfsign', {
+        const issuerSelfSign = new Issuer(this, 'issuer-webhook-selfsign', {
             spec: {
                 selfSigned: {},
             },
@@ -85,9 +85,9 @@ export class CertManagerWebhookExternalDns extends Chart {
                 secretName: `${name}-ca`,
                 duration: '43800h', // 5y
                 issuerRef: {
-                    name: issuerSelfsign.name,
+                    name: issuerSelfSign.name,
                 },
-                commonName: `ca.${name}.cert-manager`,
+                commonName: `ca.${name}.${this.namespace!}`,
                 isCa: true,
             },
         });
@@ -112,7 +112,7 @@ export class CertManagerWebhookExternalDns extends Chart {
                         containers: [
                             {
                                 image: 'absaoss/cert-manager-webhook-externaldns:dev',
-                                name: 'cert-manager-webhook-externaldns',
+                                name,
                                 args: [
                                     '--tls-cert-file=/tls/tls.crt',
                                     '--tls-private-key-file=/tls/tls.key',
@@ -158,12 +158,27 @@ export class CertManagerWebhookExternalDns extends Chart {
             },
         });
 
+        const clusterRole = new KubeClusterRole(this, 'cluster-role', {
+            rules: [
+                {
+                    apiGroups: ['externaldns.k8s.io'],
+                    resources: ['dnsendpoints'],
+                    verbs: ['create', 'list', 'delete'],
+                },
+                {
+                    apiGroups: ['flowcontrol.apiserver.k8s.io'],
+                    resources: ['flowschemas', 'prioritylevelconfigurations'],
+                    verbs: ['list', 'watch'],
+                },
+            ],
+        });
+
         // Grant the webhook permission to read the ConfigMap containing the Kubernetes
         // apiserver's requestheader-ca-certificate.
         // This ConfigMap is automatically created by the Kubernetes apiserver.
-        new KubeRoleBinding(this, 'KubeRoleBinding', {
+        new KubeRoleBinding(this, 'role-binding-reader', {
             metadata: {
-                name: 'externaldns-webhook:webhook-authentication-reader',
+                name: `${name}:webhook-authentication-reader`,
                 namespace: 'kube-system',
             },
             roleRef: {
@@ -183,9 +198,9 @@ export class CertManagerWebhookExternalDns extends Chart {
 
         // apiserver gets the auth-delegator role to delegate auth decisions to
         // the core apiserver
-        new KubeClusterRoleBinding(this, 'ClusterRoleBinding', {
+        new KubeClusterRoleBinding(this, 'cluster-role-binding', {
             metadata: {
-                name: 'externaldns-webhook:auth-delegator',
+                name: `${name}:auth-delegator`,
             },
             roleRef: {
                 apiGroup: 'rbac.authorization.k8s.io',
@@ -202,32 +217,14 @@ export class CertManagerWebhookExternalDns extends Chart {
             ],
         });
 
-        new KubeClusterRole(this, 'KubeClusterRole', {
+        new KubeClusterRoleBinding(this, 'role-binding-flowcontrol', {
             metadata: {
-                name: 'externaldns-webhook-role',
-            },
-            rules: [
-                {
-                    apiGroups: ['externaldns.k8s.io'],
-                    resources: ['dnsendpoints'],
-                    verbs: ['create', 'list', 'delete'],
-                },
-                {
-                    apiGroups: ['flowcontrol.apiserver.k8s.io'],
-                    resources: ['flowschemas', 'prioritylevelconfigurations'],
-                    verbs: ['list', 'watch'],
-                },
-            ],
-        });
-
-        new KubeClusterRoleBinding(this, 'KubeClusterRoleBinding', {
-            metadata: {
-                name: 'externaldns-webhook:flowcontrol',
+                name: `${name}:flowcontrol`,
             },
             roleRef: {
                 apiGroup: 'rbac.authorization.k8s.io',
                 kind: 'ClusterRole',
-                name: 'externaldns-webhook-role',
+                name: clusterRole.name,
             },
             subjects: [
                 {
@@ -240,21 +237,18 @@ export class CertManagerWebhookExternalDns extends Chart {
         });
 
         // Serving certificate for the webhook to use
-        new Certificate(this, 'Certificate-webhook', {
-            metadata: {
-                name: 'externaldns-webhook-tls',
-            },
+        new Certificate(this, 'tls', {
             spec: {
-                secretName: 'externaldns-webhook-tls',
+                secretName: `${name}-tls`,
                 duration: '8760h', // 1y
                 issuerRef: {
                     name: issuerCa.name,
                 },
                 dnsNames: [
-                    'externaldns-webhook',
-                    'externaldns-webhook.cert-manager',
-                    'externaldns-webhook.cert-manager.svc',
-                    'externaldns-webhook.cert-manager.svc.cluster.local',
+                    name,
+                    `${name}.${this.namespace!}`,
+                    `${name}.${this.namespace!}.svc`,
+                    `${name}.${this.namespace!}.svc.cluster.local`,
                 ],
             },
         });

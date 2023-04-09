@@ -17,6 +17,7 @@ export const appFactory = (app: App) => {
 
     chart = 'certificate-issuer';
     namespace = 'cert-manager';
+    const environment = 'staging';
 
     const { clusterIssuer } = new CloudflareCertificateIssuer(app, chart, {
         namespace,
@@ -29,7 +30,7 @@ export const appFactory = (app: App) => {
                 key: 'cloudflare_api_token',
             },
         },
-        environment: 'staging',
+        environment,
     });
 
     chart = 'hello-kubernetes';
