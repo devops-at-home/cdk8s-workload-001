@@ -117,7 +117,7 @@ exports[`Snapshot test for appFactory chart hello-kubernetes 1`] = `
       "labels": {
         "chart": "hello-kubernetes",
       },
-      "name": "hello-kubernetes-serviceaccount-c8eeda50",
+      "name": "hello-kubernetes-service-account-c84aaf83",
       "namespace": "default",
     },
   },
@@ -207,7 +207,7 @@ exports[`Snapshot test for appFactory chart hello-kubernetes 1`] = `
               },
             },
           ],
-          "serviceAccountName": "hello-kubernetes-serviceaccount-c8eeda50",
+          "serviceAccountName": "hello-kubernetes-service-account-c84aaf83",
         },
       },
     },
