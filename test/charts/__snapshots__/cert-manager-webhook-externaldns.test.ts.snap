@@ -1,864 +1,343 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Snapshot tests CertManagerWebhookExternalDns 1`] = `
-CertManagerWebhookExternalDns {
-  "_disableResourceNameHashes": false,
-  "_labels": {},
-  "namespace": "cert-manager",
-  "node": Node {
-    "_children": {
-      "CaCert": Certificate {
-        "apiGroup": "cert-manager.io",
-        "apiVersion": "cert-manager.io/v1",
-        "chart": [Circular],
-        "kind": "Certificate",
-        "metadata": ApiObjectMetadataDefinition {
-          "_additionalAttributes": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook-ca",
-            "namespace": "cert-manager",
-          },
-          "annotations": {},
-          "finalizers": [],
-          "labels": {
-            "app": "externaldns-webhook",
-          },
-          "name": "externaldns-webhook-ca",
-          "namespace": "cert-manager",
-          "ownerReferences": [],
-        },
-        "name": "externaldns-webhook-ca",
-        "node": Node {
-          "_children": {},
-          "_context": {},
-          "_dependencies": Set {},
-          "_locked": false,
-          "_metadata": [],
-          "_validations": [],
-          "host": [Circular],
-          "id": "CaCert",
-          "scope": [Circular],
-        },
-        "patches": [],
-        "props": {
-          "apiVersion": "cert-manager.io/v1",
-          "kind": "Certificate",
-          "metadata": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook-ca",
-          },
-          "spec": {
-            "commonName": "ca.externaldns-webhook.cert-manager",
-            "duration": "43800h",
-            "isCa": true,
-            "issuerRef": {
-              "name": "externaldns-webhook-selfsign",
-            },
-            "secretName": "externaldns-webhook-ca",
-          },
-        },
-        Symbol(@aws-cdk/core.DependableTrait): {
-          "dependencyRoots": [
-            [Circular],
-          ],
+exports[`cert-mnager-webhook-external-dns Snapshot test 1`] = `
+[
+  {
+    "apiVersion": "apiregistration.k8s.io/v1",
+    "kind": "APIService",
+    "metadata": {
+      "annotations": {
+        "cert-manager.io/inject-ca-from": "cert-manager/externaldns-webhook-tls",
+      },
+      "labels": {
+        "app": "externaldns-webhook",
+        "chart": "cert-mnager-webhook-external-dns",
+      },
+      "name": "v1alpha1.example.com",
+      "namespace": "cert-manager",
+    },
+    "spec": {
+      "group": "example.com",
+      "groupPriorityMinimum": 1000,
+      "service": {
+        "name": "externaldns-webhook",
+        "namespace": "cert-manager",
+      },
+      "version": "v1alpha1",
+      "versionPriority": 15,
+    },
+  },
+  {
+    "apiVersion": "cert-manager.io/v1",
+    "kind": "Certificate",
+    "metadata": {
+      "labels": {
+        "app": "externaldns-webhook",
+        "chart": "cert-mnager-webhook-external-dns",
+      },
+      "name": "externaldns-webhook-ca",
+      "namespace": "cert-manager",
+    },
+    "spec": {
+      "commonName": "ca.externaldns-webhook.cert-manager",
+      "duration": "43800h",
+      "isCA": true,
+      "issuerRef": {
+        "name": "externaldns-webhook-selfsign",
+      },
+      "secretName": "externaldns-webhook-ca",
+    },
+  },
+  {
+    "apiVersion": "apps/v1",
+    "kind": "Deployment",
+    "metadata": {
+      "labels": {
+        "app": "externaldns-webhook",
+        "chart": "cert-mnager-webhook-external-dns",
+      },
+      "name": "cert-manager-externaldns-webhook",
+      "namespace": "cert-manager",
+    },
+    "spec": {
+      "replicas": 1,
+      "selector": {
+        "matchLabels": {
+          "app": "externaldns-webhook",
         },
       },
-      "Certificate-webhook": Certificate {
-        "apiGroup": "cert-manager.io",
-        "apiVersion": "cert-manager.io/v1",
-        "chart": [Circular],
-        "kind": "Certificate",
-        "metadata": ApiObjectMetadataDefinition {
-          "_additionalAttributes": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook-tls",
-            "namespace": "cert-manager",
-          },
-          "annotations": {},
-          "finalizers": [],
+      "template": {
+        "metadata": {
           "labels": {
             "app": "externaldns-webhook",
           },
-          "name": "externaldns-webhook-tls",
-          "namespace": "cert-manager",
-          "ownerReferences": [],
         },
-        "name": "externaldns-webhook-tls",
-        "node": Node {
-          "_children": {},
-          "_context": {},
-          "_dependencies": Set {},
-          "_locked": false,
-          "_metadata": [],
-          "_validations": [],
-          "host": [Circular],
-          "id": "Certificate-webhook",
-          "scope": [Circular],
-        },
-        "patches": [],
-        "props": {
-          "apiVersion": "cert-manager.io/v1",
-          "kind": "Certificate",
-          "metadata": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook-tls",
-          },
-          "spec": {
-            "dnsNames": [
-              "externaldns-webhook",
-              "externaldns-webhook.cert-manager",
-              "externaldns-webhook.cert-manager.svc",
-              "externaldns-webhook.cert-manager.svc.cluster.local",
-            ],
-            "duration": "8760h",
-            "issuerRef": {
-              "name": "externaldns-webhook-ca",
-            },
-            "secretName": "externaldns-webhook-tls",
-          },
-        },
-        Symbol(@aws-cdk/core.DependableTrait): {
-          "dependencyRoots": [
-            [Circular],
-          ],
-        },
-      },
-      "ClusterRoleBinding": KubeClusterRoleBinding {
-        "apiGroup": "rbac.authorization.k8s.io",
-        "apiVersion": "rbac.authorization.k8s.io/v1",
-        "chart": [Circular],
-        "kind": "ClusterRoleBinding",
-        "metadata": ApiObjectMetadataDefinition {
-          "_additionalAttributes": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook:auth-delegator",
-            "namespace": "cert-manager",
-          },
-          "annotations": {},
-          "finalizers": [],
-          "labels": {
-            "app": "externaldns-webhook",
-          },
-          "name": "externaldns-webhook:auth-delegator",
-          "namespace": "cert-manager",
-          "ownerReferences": [],
-        },
-        "name": "externaldns-webhook:auth-delegator",
-        "node": Node {
-          "_children": {},
-          "_context": {},
-          "_dependencies": Set {},
-          "_locked": false,
-          "_metadata": [],
-          "_validations": [],
-          "host": [Circular],
-          "id": "ClusterRoleBinding",
-          "scope": [Circular],
-        },
-        "patches": [],
-        "props": {
-          "apiVersion": "rbac.authorization.k8s.io/v1",
-          "kind": "ClusterRoleBinding",
-          "metadata": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook:auth-delegator",
-          },
-          "roleRef": {
-            "apiGroup": "rbac.authorization.k8s.io",
-            "kind": "ClusterRole",
-            "name": "system:auth-delegator",
-          },
-          "subjects": [
+        "spec": {
+          "containers": [
             {
-              "apiGroup": "",
-              "kind": "ServiceAccount",
-              "name": "externaldns-webhook",
-              "namespace": "cert-manager",
-            },
-          ],
-        },
-        Symbol(@aws-cdk/core.DependableTrait): {
-          "dependencyRoots": [
-            [Circular],
-          ],
-        },
-      },
-      "Deployment": KubeDeployment {
-        "apiGroup": "apps",
-        "apiVersion": "apps/v1",
-        "chart": [Circular],
-        "kind": "Deployment",
-        "metadata": ApiObjectMetadataDefinition {
-          "_additionalAttributes": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "cert-manager-externaldns-webhook",
-            "namespace": "cert-manager",
-          },
-          "annotations": {},
-          "finalizers": [],
-          "labels": {
-            "app": "externaldns-webhook",
-          },
-          "name": "cert-manager-externaldns-webhook",
-          "namespace": "cert-manager",
-          "ownerReferences": [],
-        },
-        "name": "cert-manager-externaldns-webhook",
-        "node": Node {
-          "_children": {},
-          "_context": {},
-          "_dependencies": Set {},
-          "_locked": false,
-          "_metadata": [],
-          "_validations": [],
-          "host": [Circular],
-          "id": "Deployment",
-          "scope": [Circular],
-        },
-        "patches": [],
-        "props": {
-          "apiVersion": "apps/v1",
-          "kind": "Deployment",
-          "metadata": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "cert-manager-externaldns-webhook",
-          },
-          "spec": {
-            "replicas": 1,
-            "selector": {
-              "matchLabels": {
-                "app": "externaldns-webhook",
-              },
-            },
-            "template": {
-              "metadata": {
-                "labels": {
-                  "app": "externaldns-webhook",
+              "args": [
+                "--tls-cert-file=/tls/tls.crt",
+                "--tls-private-key-file=/tls/tls.key",
+              ],
+              "env": [
+                {
+                  "name": "GROUP_NAME",
+                  "value": "example.com",
+                },
+              ],
+              "image": "absaoss/cert-manager-webhook-externaldns:dev",
+              "livenessProbe": {
+                "httpGet": {
+                  "path": "/healthz",
+                  "port": 443,
+                  "scheme": "HTTPS",
                 },
               },
-              "spec": {
-                "containers": [
-                  {
-                    "args": [
-                      "--tls-cert-file=/tls/tls.crt",
-                      "--tls-private-key-file=/tls/tls.key",
-                    ],
-                    "env": [
-                      {
-                        "name": "GROUP_NAME",
-                        "value": "example.com",
-                      },
-                    ],
-                    "image": "absaoss/cert-manager-webhook-externaldns:dev",
-                    "livenessProbe": {
-                      "httpGet": {
-                        "path": "/healthz",
-                        "port": IntOrString {
-                          "value": 443,
-                        },
-                        "scheme": "HTTPS",
-                      },
-                    },
-                    "name": "cert-manager-webhook-externaldns",
-                    "ports": [
-                      {
-                        "containerPort": 443,
-                        "name": "https",
-                        "protocol": "TCP",
-                      },
-                    ],
-                    "readinessProbe": {
-                      "httpGet": {
-                        "path": "/healthz",
-                        "port": IntOrString {
-                          "value": 443,
-                        },
-                        "scheme": "HTTPS",
-                      },
-                    },
-                    "volumeMounts": [
-                      {
-                        "mountPath": "/tls",
-                        "name": "certs",
-                        "readOnly": true,
-                      },
-                    ],
-                  },
-                ],
-                "serviceAccountName": "externaldns-webhook",
-                "volumes": [
-                  {
-                    "name": "certs",
-                    "secret": {
-                      "secretName": "externaldns-webhook-tls",
-                    },
-                  },
-                ],
+              "name": "cert-manager-webhook-externaldns",
+              "ports": [
+                {
+                  "containerPort": 443,
+                  "name": "https",
+                  "protocol": "TCP",
+                },
+              ],
+              "readinessProbe": {
+                "httpGet": {
+                  "path": "/healthz",
+                  "port": 443,
+                  "scheme": "HTTPS",
+                },
+              },
+              "volumeMounts": [
+                {
+                  "mountPath": "/tls",
+                  "name": "certs",
+                  "readOnly": true,
+                },
+              ],
+            },
+          ],
+          "serviceAccountName": "externaldns-webhook",
+          "volumes": [
+            {
+              "name": "certs",
+              "secret": {
+                "secretName": "externaldns-webhook-tls",
               },
             },
-          },
-        },
-        Symbol(@aws-cdk/core.DependableTrait): {
-          "dependencyRoots": [
-            [Circular],
           ],
         },
-      },
-      "Issuer-webhook-ca": Issuer {
-        "apiGroup": "cert-manager.io",
-        "apiVersion": "cert-manager.io/v1",
-        "chart": [Circular],
-        "kind": "Issuer",
-        "metadata": ApiObjectMetadataDefinition {
-          "_additionalAttributes": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook-ca",
-            "namespace": "cert-manager",
-          },
-          "annotations": {},
-          "finalizers": [],
-          "labels": {
-            "app": "externaldns-webhook",
-          },
-          "name": "externaldns-webhook-ca",
-          "namespace": "cert-manager",
-          "ownerReferences": [],
-        },
-        "name": "externaldns-webhook-ca",
-        "node": Node {
-          "_children": {},
-          "_context": {},
-          "_dependencies": Set {},
-          "_locked": false,
-          "_metadata": [],
-          "_validations": [],
-          "host": [Circular],
-          "id": "Issuer-webhook-ca",
-          "scope": [Circular],
-        },
-        "patches": [],
-        "props": {
-          "apiVersion": "cert-manager.io/v1",
-          "kind": "Issuer",
-          "metadata": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook-ca",
-          },
-          "spec": {
-            "ca": {
-              "secretName": "externaldns-webhook-ca",
-            },
-          },
-        },
-        Symbol(@aws-cdk/core.DependableTrait): {
-          "dependencyRoots": [
-            [Circular],
-          ],
-        },
-      },
-      "Issuer-webhook-selfsign": Issuer {
-        "apiGroup": "cert-manager.io",
-        "apiVersion": "cert-manager.io/v1",
-        "chart": [Circular],
-        "kind": "Issuer",
-        "metadata": ApiObjectMetadataDefinition {
-          "_additionalAttributes": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook-selfsign",
-            "namespace": "cert-manager",
-          },
-          "annotations": {},
-          "finalizers": [],
-          "labels": {
-            "app": "externaldns-webhook",
-          },
-          "name": "externaldns-webhook-selfsign",
-          "namespace": "cert-manager",
-          "ownerReferences": [],
-        },
-        "name": "externaldns-webhook-selfsign",
-        "node": Node {
-          "_children": {},
-          "_context": {},
-          "_dependencies": Set {},
-          "_locked": false,
-          "_metadata": [],
-          "_validations": [],
-          "host": [Circular],
-          "id": "Issuer-webhook-selfsign",
-          "scope": [Circular],
-        },
-        "patches": [],
-        "props": {
-          "apiVersion": "cert-manager.io/v1",
-          "kind": "Issuer",
-          "metadata": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook-selfsign",
-          },
-          "spec": {
-            "selfSigned": {},
-          },
-        },
-        Symbol(@aws-cdk/core.DependableTrait): {
-          "dependencyRoots": [
-            [Circular],
-          ],
-        },
-      },
-      "KubeApiService": KubeApiService {
-        "apiGroup": "apiregistration.k8s.io",
-        "apiVersion": "apiregistration.k8s.io/v1",
-        "chart": [Circular],
-        "kind": "APIService",
-        "metadata": ApiObjectMetadataDefinition {
-          "_additionalAttributes": {
-            "annotations": {
-              "cert-manager.io/inject-ca-from": "cert-manager/externaldns-webhook-tls",
-            },
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "v1alpha1.example.com",
-            "namespace": "cert-manager",
-          },
-          "annotations": {
-            "cert-manager.io/inject-ca-from": "cert-manager/externaldns-webhook-tls",
-          },
-          "finalizers": [],
-          "labels": {
-            "app": "externaldns-webhook",
-          },
-          "name": "v1alpha1.example.com",
-          "namespace": "cert-manager",
-          "ownerReferences": [],
-        },
-        "name": "v1alpha1.example.com",
-        "node": Node {
-          "_children": {},
-          "_context": {},
-          "_dependencies": Set {},
-          "_locked": false,
-          "_metadata": [],
-          "_validations": [],
-          "host": [Circular],
-          "id": "KubeApiService",
-          "scope": [Circular],
-        },
-        "patches": [],
-        "props": {
-          "apiVersion": "apiregistration.k8s.io/v1",
-          "kind": "APIService",
-          "metadata": {
-            "annotations": {
-              "cert-manager.io/inject-ca-from": "cert-manager/externaldns-webhook-tls",
-            },
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "v1alpha1.example.com",
-          },
-          "spec": {
-            "group": "example.com",
-            "groupPriorityMinimum": 1000,
-            "service": {
-              "name": "externaldns-webhook",
-              "namespace": "cert-manager",
-            },
-            "version": "v1alpha1",
-            "versionPriority": 15,
-          },
-        },
-        Symbol(@aws-cdk/core.DependableTrait): {
-          "dependencyRoots": [
-            [Circular],
-          ],
-        },
-      },
-      "KubeClusterRole": KubeClusterRole {
-        "apiGroup": "rbac.authorization.k8s.io",
-        "apiVersion": "rbac.authorization.k8s.io/v1",
-        "chart": [Circular],
-        "kind": "ClusterRole",
-        "metadata": ApiObjectMetadataDefinition {
-          "_additionalAttributes": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook-role",
-            "namespace": "cert-manager",
-          },
-          "annotations": {},
-          "finalizers": [],
-          "labels": {
-            "app": "externaldns-webhook",
-          },
-          "name": "externaldns-webhook-role",
-          "namespace": "cert-manager",
-          "ownerReferences": [],
-        },
-        "name": "externaldns-webhook-role",
-        "node": Node {
-          "_children": {},
-          "_context": {},
-          "_dependencies": Set {},
-          "_locked": false,
-          "_metadata": [],
-          "_validations": [],
-          "host": [Circular],
-          "id": "KubeClusterRole",
-          "scope": [Circular],
-        },
-        "patches": [],
-        "props": {
-          "apiVersion": "rbac.authorization.k8s.io/v1",
-          "kind": "ClusterRole",
-          "metadata": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook-role",
-          },
-          "rules": [
-            {
-              "apiGroups": [
-                "externaldns.k8s.io",
-              ],
-              "resources": [
-                "dnsendpoints",
-              ],
-              "verbs": [
-                "create",
-                "list",
-                "delete",
-              ],
-            },
-            {
-              "apiGroups": [
-                "flowcontrol.apiserver.k8s.io",
-              ],
-              "resources": [
-                "flowschemas",
-                "prioritylevelconfigurations",
-              ],
-              "verbs": [
-                "list",
-                "watch",
-              ],
-            },
-          ],
-        },
-        Symbol(@aws-cdk/core.DependableTrait): {
-          "dependencyRoots": [
-            [Circular],
-          ],
-        },
-      },
-      "KubeClusterRoleBinding": KubeClusterRoleBinding {
-        "apiGroup": "rbac.authorization.k8s.io",
-        "apiVersion": "rbac.authorization.k8s.io/v1",
-        "chart": [Circular],
-        "kind": "ClusterRoleBinding",
-        "metadata": ApiObjectMetadataDefinition {
-          "_additionalAttributes": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook:flowcontrol",
-            "namespace": "cert-manager",
-          },
-          "annotations": {},
-          "finalizers": [],
-          "labels": {
-            "app": "externaldns-webhook",
-          },
-          "name": "externaldns-webhook:flowcontrol",
-          "namespace": "cert-manager",
-          "ownerReferences": [],
-        },
-        "name": "externaldns-webhook:flowcontrol",
-        "node": Node {
-          "_children": {},
-          "_context": {},
-          "_dependencies": Set {},
-          "_locked": false,
-          "_metadata": [],
-          "_validations": [],
-          "host": [Circular],
-          "id": "KubeClusterRoleBinding",
-          "scope": [Circular],
-        },
-        "patches": [],
-        "props": {
-          "apiVersion": "rbac.authorization.k8s.io/v1",
-          "kind": "ClusterRoleBinding",
-          "metadata": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook:flowcontrol",
-          },
-          "roleRef": {
-            "apiGroup": "rbac.authorization.k8s.io",
-            "kind": "ClusterRole",
-            "name": "externaldns-webhook-role",
-          },
-          "subjects": [
-            {
-              "apiGroup": "",
-              "kind": "ServiceAccount",
-              "name": "externaldns-webhook",
-              "namespace": "cert-manager",
-            },
-          ],
-        },
-        Symbol(@aws-cdk/core.DependableTrait): {
-          "dependencyRoots": [
-            [Circular],
-          ],
-        },
-      },
-      "KubeRoleBinding": KubeRoleBinding {
-        "apiGroup": "rbac.authorization.k8s.io",
-        "apiVersion": "rbac.authorization.k8s.io/v1",
-        "chart": [Circular],
-        "kind": "RoleBinding",
-        "metadata": ApiObjectMetadataDefinition {
-          "_additionalAttributes": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook:webhook-authentication-reader",
-            "namespace": "kube-system",
-          },
-          "annotations": {},
-          "finalizers": [],
-          "labels": {
-            "app": "externaldns-webhook",
-          },
-          "name": "externaldns-webhook:webhook-authentication-reader",
-          "namespace": "kube-system",
-          "ownerReferences": [],
-        },
-        "name": "externaldns-webhook:webhook-authentication-reader",
-        "node": Node {
-          "_children": {},
-          "_context": {},
-          "_dependencies": Set {},
-          "_locked": false,
-          "_metadata": [],
-          "_validations": [],
-          "host": [Circular],
-          "id": "KubeRoleBinding",
-          "scope": [Circular],
-        },
-        "patches": [],
-        "props": {
-          "apiVersion": "rbac.authorization.k8s.io/v1",
-          "kind": "RoleBinding",
-          "metadata": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook:webhook-authentication-reader",
-            "namespace": "kube-system",
-          },
-          "roleRef": {
-            "apiGroup": "rbac.authorization.k8s.io",
-            "kind": "Role",
-            "name": "extension-apiserver-authentication-reader",
-          },
-          "subjects": [
-            {
-              "apiGroup": "",
-              "kind": "ServiceAccount",
-              "name": "externaldns-webhook",
-              "namespace": "cert-manager",
-            },
-          ],
-        },
-        Symbol(@aws-cdk/core.DependableTrait): {
-          "dependencyRoots": [
-            [Circular],
-          ],
-        },
-      },
-      "Service": KubeService {
-        "apiGroup": "core",
-        "apiVersion": "v1",
-        "chart": [Circular],
-        "kind": "Service",
-        "metadata": ApiObjectMetadataDefinition {
-          "_additionalAttributes": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook",
-            "namespace": "cert-manager",
-          },
-          "annotations": {},
-          "finalizers": [],
-          "labels": {
-            "app": "externaldns-webhook",
-          },
-          "name": "externaldns-webhook",
-          "namespace": "cert-manager",
-          "ownerReferences": [],
-        },
-        "name": "externaldns-webhook",
-        "node": Node {
-          "_children": {},
-          "_context": {},
-          "_dependencies": Set {},
-          "_locked": false,
-          "_metadata": [],
-          "_validations": [],
-          "host": [Circular],
-          "id": "Service",
-          "scope": [Circular],
-        },
-        "patches": [],
-        "props": {
-          "apiVersion": "v1",
-          "kind": "Service",
-          "metadata": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook",
-          },
-          "spec": {
-            "ports": [
-              {
-                "name": "https",
-                "port": 443,
-                "protocol": "TCP",
-              },
-            ],
-            "selector": {
-              "app": "externaldns-webhook",
-            },
-            "type": "ClusterIP",
-          },
-        },
-        Symbol(@aws-cdk/core.DependableTrait): {
-          "dependencyRoots": [
-            [Circular],
-          ],
-        },
-      },
-      "ServiceAccount": KubeServiceAccount {
-        "apiGroup": "core",
-        "apiVersion": "v1",
-        "chart": [Circular],
-        "kind": "ServiceAccount",
-        "metadata": ApiObjectMetadataDefinition {
-          "_additionalAttributes": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook",
-            "namespace": "cert-manager",
-          },
-          "annotations": {},
-          "finalizers": [],
-          "labels": {
-            "app": "externaldns-webhook",
-          },
-          "name": "externaldns-webhook",
-          "namespace": "cert-manager",
-          "ownerReferences": [],
-        },
-        "name": "externaldns-webhook",
-        "node": Node {
-          "_children": {},
-          "_context": {},
-          "_dependencies": Set {},
-          "_locked": false,
-          "_metadata": [],
-          "_validations": [],
-          "host": [Circular],
-          "id": "ServiceAccount",
-          "scope": [Circular],
-        },
-        "patches": [],
-        "props": {
-          "apiVersion": "v1",
-          "kind": "ServiceAccount",
-          "metadata": {
-            "labels": {
-              "app": "externaldns-webhook",
-            },
-            "name": "externaldns-webhook",
-          },
-        },
-        Symbol(@aws-cdk/core.DependableTrait): {
-          "dependencyRoots": [
-            [Circular],
-          ],
-        },
-      },
-    },
-    "_context": {},
-    "_dependencies": Set {},
-    "_locked": false,
-    "_metadata": [],
-    "_validations": [],
-    "host": [Circular],
-    "id": "CertManagerWebhookExternalDns",
-    "scope": App {
-      "node": Node {
-        "_children": {
-          "CertManagerWebhookExternalDns": [Circular],
-        },
-        "_context": {},
-        "_dependencies": Set {},
-        "_locked": false,
-        "_metadata": [],
-        "_validations": [],
-        "host": [Circular],
-        "id": "",
-        "scope": undefined,
-      },
-      "outdir": "dist",
-      "outputFileExtension": ".k8s.yaml",
-      "recordConstructMetadata": false,
-      "yamlOutputType": 1,
-      Symbol(@aws-cdk/core.DependableTrait): {
-        "dependencyRoots": [
-          [Circular],
-        ],
       },
     },
   },
-  Symbol(@aws-cdk/core.DependableTrait): {
-    "dependencyRoots": [
-      [Circular],
+  {
+    "apiVersion": "cert-manager.io/v1",
+    "kind": "Issuer",
+    "metadata": {
+      "labels": {
+        "app": "externaldns-webhook",
+        "chart": "cert-mnager-webhook-external-dns",
+      },
+      "name": "externaldns-webhook-selfsign",
+      "namespace": "cert-manager",
+    },
+    "spec": {
+      "selfSigned": {},
+    },
+  },
+  {
+    "apiVersion": "cert-manager.io/v1",
+    "kind": "Issuer",
+    "metadata": {
+      "labels": {
+        "app": "externaldns-webhook",
+        "chart": "cert-mnager-webhook-external-dns",
+      },
+      "name": "externaldns-webhook-ca",
+      "namespace": "cert-manager",
+    },
+    "spec": {
+      "ca": {
+        "secretName": "externaldns-webhook-ca",
+      },
+    },
+  },
+  {
+    "apiVersion": "v1",
+    "kind": "ServiceAccount",
+    "metadata": {
+      "labels": {
+        "app": "externaldns-webhook",
+        "chart": "cert-mnager-webhook-external-dns",
+      },
+      "name": "externaldns-webhook",
+      "namespace": "cert-manager",
+    },
+  },
+  {
+    "apiVersion": "rbac.authorization.k8s.io/v1",
+    "kind": "RoleBinding",
+    "metadata": {
+      "labels": {
+        "app": "externaldns-webhook",
+        "chart": "cert-mnager-webhook-external-dns",
+      },
+      "name": "externaldns-webhook:webhook-authentication-reader",
+      "namespace": "kube-system",
+    },
+    "roleRef": {
+      "apiGroup": "rbac.authorization.k8s.io",
+      "kind": "Role",
+      "name": "extension-apiserver-authentication-reader",
+    },
+    "subjects": [
+      {
+        "apiGroup": "",
+        "kind": "ServiceAccount",
+        "name": "externaldns-webhook",
+        "namespace": "cert-manager",
+      },
     ],
   },
-}
+  {
+    "apiVersion": "rbac.authorization.k8s.io/v1",
+    "kind": "ClusterRoleBinding",
+    "metadata": {
+      "labels": {
+        "app": "externaldns-webhook",
+        "chart": "cert-mnager-webhook-external-dns",
+      },
+      "name": "externaldns-webhook:auth-delegator",
+      "namespace": "cert-manager",
+    },
+    "roleRef": {
+      "apiGroup": "rbac.authorization.k8s.io",
+      "kind": "ClusterRole",
+      "name": "system:auth-delegator",
+    },
+    "subjects": [
+      {
+        "apiGroup": "",
+        "kind": "ServiceAccount",
+        "name": "externaldns-webhook",
+        "namespace": "cert-manager",
+      },
+    ],
+  },
+  {
+    "apiVersion": "rbac.authorization.k8s.io/v1",
+    "kind": "ClusterRole",
+    "metadata": {
+      "labels": {
+        "app": "externaldns-webhook",
+        "chart": "cert-mnager-webhook-external-dns",
+      },
+      "name": "externaldns-webhook-role",
+      "namespace": "cert-manager",
+    },
+    "rules": [
+      {
+        "apiGroups": [
+          "externaldns.k8s.io",
+        ],
+        "resources": [
+          "dnsendpoints",
+        ],
+        "verbs": [
+          "create",
+          "list",
+          "delete",
+        ],
+      },
+      {
+        "apiGroups": [
+          "flowcontrol.apiserver.k8s.io",
+        ],
+        "resources": [
+          "flowschemas",
+          "prioritylevelconfigurations",
+        ],
+        "verbs": [
+          "list",
+          "watch",
+        ],
+      },
+    ],
+  },
+  {
+    "apiVersion": "rbac.authorization.k8s.io/v1",
+    "kind": "ClusterRoleBinding",
+    "metadata": {
+      "labels": {
+        "app": "externaldns-webhook",
+        "chart": "cert-mnager-webhook-external-dns",
+      },
+      "name": "externaldns-webhook:flowcontrol",
+      "namespace": "cert-manager",
+    },
+    "roleRef": {
+      "apiGroup": "rbac.authorization.k8s.io",
+      "kind": "ClusterRole",
+      "name": "externaldns-webhook-role",
+    },
+    "subjects": [
+      {
+        "apiGroup": "",
+        "kind": "ServiceAccount",
+        "name": "externaldns-webhook",
+        "namespace": "cert-manager",
+      },
+    ],
+  },
+  {
+    "apiVersion": "cert-manager.io/v1",
+    "kind": "Certificate",
+    "metadata": {
+      "labels": {
+        "app": "externaldns-webhook",
+        "chart": "cert-mnager-webhook-external-dns",
+      },
+      "name": "externaldns-webhook-tls",
+      "namespace": "cert-manager",
+    },
+    "spec": {
+      "dnsNames": [
+        "externaldns-webhook",
+        "externaldns-webhook.cert-manager",
+        "externaldns-webhook.cert-manager.svc",
+        "externaldns-webhook.cert-manager.svc.cluster.local",
+      ],
+      "duration": "8760h",
+      "issuerRef": {
+        "name": "externaldns-webhook-ca",
+      },
+      "secretName": "externaldns-webhook-tls",
+    },
+  },
+  {
+    "apiVersion": "v1",
+    "kind": "Service",
+    "metadata": {
+      "labels": {
+        "app": "externaldns-webhook",
+        "chart": "cert-mnager-webhook-external-dns",
+      },
+      "name": "externaldns-webhook",
+      "namespace": "cert-manager",
+    },
+    "spec": {
+      "ports": [
+        {
+          "name": "https",
+          "port": 443,
+          "protocol": "TCP",
+        },
+      ],
+      "selector": {
+        "app": "externaldns-webhook",
+      },
+      "type": "ClusterIP",
+    },
+  },
+]
 `;

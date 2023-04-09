@@ -1,44 +1,47 @@
 import { Construct } from 'constructs';
 import { Chart, ChartProps } from 'cdk8s';
 import { ImagePullPolicy, Protocol } from 'cdk8s-plus-22/lib/container';
-import { IntOrString, KubeDeployment, KubeService, KubeServiceAccount } from '../imports/k8s';
+import {
+    IntOrString,
+    KubeDeployment,
+    KubeService,
+    KubeServiceAccount,
+    KubeIngress,
+    IngressTls,
+    KubeSecret,
+} from '../imports/k8s';
 import { HttpIngressPathType, ServiceType } from 'cdk8s-plus-22';
-import { KubeIngress } from 'cdk8s-plus-22/lib/imports/k8s';
 import {
     ExternalSecret,
     SecretStore,
     SecretStoreSpecProviderAwsService,
 } from '../imports/external-secrets.io';
+import { ClusterIssuer } from '../imports/cert-manager.io';
+import { NetworkAttachmentDefinition } from '../imports/k8s.cni.cncf.io';
 
 export type HelloKubernetesConfig = {
-    name: string;
     containerPort: number;
     image: string;
-    sslRedirect: boolean;
     host: string;
 };
 
-interface HelloKubernetesProps extends ChartProps, Partial<HelloKubernetesConfig> {}
+interface HelloKubernetesProps extends ChartProps, Partial<HelloKubernetesConfig> {
+    clusterIssuer?: ClusterIssuer;
+}
 
 export class HelloKubernetes extends Chart {
     constructor(scope: Construct, id: string, props: HelloKubernetesProps = {}) {
         super(scope, id, props);
 
-        const { name, containerPort, image, sslRedirect, host } = parseInputs(props);
+        const { containerPort, image, host } = parseInputs(props);
 
-        const labels = { 'app.kubernetes.io/name': name };
-
-        const metadata = {
-            name,
-            labels,
-        };
+        const { clusterIssuer } = props;
 
         const selector = {
-            matchLabels: labels,
+            matchLabels: this.labels,
         };
 
-        new SecretStore(this, 'secret-store', {
-            metadata,
+        const secretStore = new SecretStore(this, 'secret-store', {
             spec: {
                 provider: {
                     aws: {
@@ -61,51 +64,43 @@ export class HelloKubernetes extends Chart {
             },
         });
 
-        new ExternalSecret(this, 'secret', {
-            metadata,
+        const externalSecret = new ExternalSecret(this, 'secret', {
             spec: {
                 secretStoreRef: {
-                    name,
+                    name: secretStore.name,
                     kind: 'SecretStore',
                 },
-                target: {
-                    name,
-                },
+                target: {},
                 data: [
                     {
                         secretKey: 'MESSAGE',
                         remoteRef: {
                             key: 'MESSAGE',
-                            // version: 'provider-key-version',
-                            // property: 'provider-key-property',
                         },
                     },
                 ],
-                // dataFrom: [
-                //     {
-                //         key: 'MESSAGE',
-                //     },
-                // ],
                 refreshInterval: '999h',
             },
         });
 
-        const serviceAccount = new KubeServiceAccount(this, 'serviceAccount', {
-            metadata,
+        new NetworkAttachmentDefinition(this, 'NetworkAttachmentDefinition', {
+            spec: {
+                config: ``,
+            },
         });
 
+        const serviceAccount = new KubeServiceAccount(this, 'service-account');
+
         new KubeDeployment(this, 'deployment', {
-            metadata,
             spec: {
                 selector,
                 replicas: 1,
                 template: {
-                    metadata,
                     spec: {
                         serviceAccountName: serviceAccount.name,
                         containers: [
                             {
-                                name,
+                                name: this.labels['chart'],
                                 image,
                                 imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
                                 ports: [
@@ -135,7 +130,7 @@ export class HelloKubernetes extends Chart {
                                         valueFrom: {
                                             secretKeyRef: {
                                                 key: 'MESSAGE',
-                                                name,
+                                                name: externalSecret.name,
                                             },
                                         },
                                     },
@@ -176,9 +171,8 @@ export class HelloKubernetes extends Chart {
         });
 
         const service = new KubeService(this, 'service', {
-            metadata,
             spec: {
-                selector: labels,
+                selector: this.labels,
                 type: ServiceType.LOAD_BALANCER,
                 ports: [
                     {
@@ -189,13 +183,30 @@ export class HelloKubernetes extends Chart {
             },
         });
 
+        const annotations: { [key: string]: string } = {
+            'kubernetes.io/ingress.class': 'traefik',
+            'traefik.ingress.kubernetes.io/router.tls': 'false',
+        };
+
+        let tls: IngressTls[] | undefined;
+
+        if (typeof clusterIssuer !== 'undefined') {
+            annotations['traefik.ingress.kubernetes.io/router.tls'] = 'true';
+            annotations['cert-manager.io/cluster-issuer'] = clusterIssuer.name;
+
+            const secret = new KubeSecret(this, 'Secret-TLS');
+
+            tls = [
+                {
+                    hosts: [host],
+                    secretName: secret.name,
+                },
+            ];
+        }
+
         new KubeIngress(this, 'ingress', {
             metadata: {
-                ...metadata,
-                annotations: {
-                    'kubernetes.io/ingress.class': 'traefik',
-                    'traefik.ingress.kubernetes.io/router.tls': `${sslRedirect}`,
-                },
+                annotations,
             },
             spec: {
                 rules: [
@@ -219,6 +230,7 @@ export class HelloKubernetes extends Chart {
                         host,
                     },
                 ],
+                tls,
             },
         });
     }
@@ -226,10 +238,8 @@ export class HelloKubernetes extends Chart {
 
 export const parseInputs = (props: Partial<HelloKubernetesConfig>): HelloKubernetesConfig => {
     return {
-        name: props.name ?? 'hello-kubernetes',
         containerPort: props.containerPort ?? 8080,
         image: props.image ?? 'paulbouwer/hello-kubernetes:1.10.1',
-        sslRedirect: props.sslRedirect ?? false,
         host: props.host ?? 'test.h6020-001.devops-at-ho.me',
     };
 };

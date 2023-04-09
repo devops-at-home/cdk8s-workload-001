@@ -1,12 +1,52 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`hello-kubernetes Snapshot test 1`] = `
+exports[`Snapshot test for appFactory chart certificate-issuer 1`] = `
+[
+  {
+    "apiVersion": "cert-manager.io/v1",
+    "kind": "ClusterIssuer",
+    "metadata": {
+      "labels": {
+        "chart": "certificate-issuer",
+      },
+      "name": "certificate-issuer-cloudflare-staging-c8a71d40",
+      "namespace": "cert-manager",
+    },
+    "spec": {
+      "acme": {
+        "privateKeySecretRef": {
+          "name": "letsencrypt-staging",
+        },
+        "server": "https://acme-staging-v02.api.letsencrypt.org/directory",
+        "solvers": [
+          {
+            "dns01": {
+              "cloudflare": {
+                "apiTokenSecretRef": {
+                  "key": "cloudflare_api_token",
+                  "name": "cloudflare",
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+  },
+]
+`;
+
+exports[`Snapshot test for appFactory chart hello-kubernetes 1`] = `
 [
   {
     "apiVersion": "external-secrets.io/v1alpha1",
     "kind": "SecretStore",
     "metadata": {
+      "labels": {
+        "chart": "hello-kubernetes",
+      },
       "name": "hello-kubernetes-secret-store-c879c760",
+      "namespace": "default",
     },
     "spec": {
       "provider": {
@@ -33,7 +73,11 @@ exports[`hello-kubernetes Snapshot test 1`] = `
     "apiVersion": "external-secrets.io/v1alpha1",
     "kind": "ExternalSecret",
     "metadata": {
+      "labels": {
+        "chart": "hello-kubernetes",
+      },
       "name": "hello-kubernetes-secret-c80c0f45",
+      "namespace": "default",
     },
     "spec": {
       "data": [
@@ -56,7 +100,11 @@ exports[`hello-kubernetes Snapshot test 1`] = `
     "apiVersion": "k8s.cni.cncf.io/v1",
     "kind": "NetworkAttachmentDefinition",
     "metadata": {
+      "labels": {
+        "chart": "hello-kubernetes",
+      },
       "name": "hello-kubernetes-networkattachmentdefinition-c858201d",
+      "namespace": "default",
     },
     "spec": {
       "config": "",
@@ -66,19 +114,29 @@ exports[`hello-kubernetes Snapshot test 1`] = `
     "apiVersion": "v1",
     "kind": "ServiceAccount",
     "metadata": {
+      "labels": {
+        "chart": "hello-kubernetes",
+      },
       "name": "hello-kubernetes-serviceaccount-c8eeda50",
+      "namespace": "default",
     },
   },
   {
     "apiVersion": "apps/v1",
     "kind": "Deployment",
     "metadata": {
+      "labels": {
+        "chart": "hello-kubernetes",
+      },
       "name": "hello-kubernetes-deployment-c8f758bb",
+      "namespace": "default",
     },
     "spec": {
       "replicas": 1,
       "selector": {
-        "matchLabels": {},
+        "matchLabels": {
+          "chart": "hello-kubernetes",
+        },
       },
       "template": {
         "spec": {
@@ -134,6 +192,7 @@ exports[`hello-kubernetes Snapshot test 1`] = `
                   "port": 8080,
                 },
               },
+              "name": "hello-kubernetes",
               "ports": [
                 {
                   "containerPort": 8080,
@@ -157,7 +216,11 @@ exports[`hello-kubernetes Snapshot test 1`] = `
     "apiVersion": "v1",
     "kind": "Service",
     "metadata": {
+      "labels": {
+        "chart": "hello-kubernetes",
+      },
       "name": "hello-kubernetes-service-c8d4454f",
+      "namespace": "default",
     },
     "spec": {
       "ports": [
@@ -166,8 +229,21 @@ exports[`hello-kubernetes Snapshot test 1`] = `
           "port": 8080,
         },
       ],
-      "selector": {},
+      "selector": {
+        "chart": "hello-kubernetes",
+      },
       "type": "LoadBalancer",
+    },
+  },
+  {
+    "apiVersion": "v1",
+    "kind": "Secret",
+    "metadata": {
+      "labels": {
+        "chart": "hello-kubernetes",
+      },
+      "name": "hello-kubernetes-secret-tls-c88b494f",
+      "namespace": "default",
     },
   },
   {
@@ -175,10 +251,15 @@ exports[`hello-kubernetes Snapshot test 1`] = `
     "kind": "Ingress",
     "metadata": {
       "annotations": {
+        "cert-manager.io/cluster-issuer": "certificate-issuer-cloudflare-staging-c8a71d40",
         "kubernetes.io/ingress.class": "traefik",
-        "traefik.ingress.kubernetes.io/router.tls": "false",
+        "traefik.ingress.kubernetes.io/router.tls": "true",
+      },
+      "labels": {
+        "chart": "hello-kubernetes",
       },
       "name": "hello-kubernetes-ingress-c8762254",
+      "namespace": "default",
     },
     "spec": {
       "rules": [
@@ -201,6 +282,54 @@ exports[`hello-kubernetes Snapshot test 1`] = `
             ],
           },
         },
+      ],
+      "tls": [
+        {
+          "hosts": [
+            "test.h6020-001.devops-at-ho.me",
+          ],
+          "secretName": "hello-kubernetes-secret-tls-c88b494f",
+        },
+      ],
+    },
+  },
+]
+`;
+
+exports[`Snapshot test for appFactory chart metal-lb-config 1`] = `
+[
+  {
+    "apiVersion": "metallb.io/v1beta1",
+    "kind": "IPAddressPool",
+    "metadata": {
+      "labels": {
+        "chart": "metal-lb-config",
+      },
+      "name": "metal-lb-config-ipaddresspool-c8fe577c",
+      "namespace": "kube-system",
+    },
+    "spec": {
+      "addresses": [
+        undefined,
+      ],
+    },
+  },
+  {
+    "apiVersion": "metallb.io/v1beta1",
+    "kind": "L2Advertisement",
+    "metadata": {
+      "labels": {
+        "chart": "metal-lb-config",
+      },
+      "name": "metal-lb-config-l2advertisement-c8c28aa3",
+      "namespace": "kube-system",
+    },
+    "spec": {
+      "interfaces": [
+        "tailscale0",
+      ],
+      "ipAddressPools": [
+        "metal-lb-config-ipaddresspool-c8fe577c",
       ],
     },
   },

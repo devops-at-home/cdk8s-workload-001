@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`dns-entry Snapshot test 1`] = `
+[
+  {
+    "apiVersion": "externaldns.k8s.io/v1alpha1",
+    "kind": "DNSEndpoint",
+    "metadata": {
+      "name": "dns-entry-dnsendpoint-c843a586",
+      "namespace": "default",
+    },
+    "spec": {
+      "endpoints": [
+        {
+          "dnsName": "test.tld",
+          "recordType": "A",
+          "targets": [
+            "127.0.0.1",
+          ],
+        },
+      ],
+    },
+  },
+]
+`;

@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`cloudflare-certificate-issuer Snapshot test 1`] = `
+[
+  {
+    "apiVersion": "cert-manager.io/v1",
+    "kind": "ClusterIssuer",
+    "metadata": {
+      "labels": {
+        "chart": "cloudflare-certificate-issuer",
+      },
+      "name": "cloudflare-certificate-issuer-cloudflare-staging-c8168836",
+      "namespace": "cert-manager",
+    },
+    "spec": {
+      "acme": {
+        "privateKeySecretRef": {
+          "name": "letsencrypt-staging",
+        },
+        "server": "https://acme-staging-v02.api.letsencrypt.org/directory",
+        "solvers": [
+          {
+            "dns01": {
+              "cloudflare": {
+                "apiTokenSecretRef": {
+                  "key": "apiTokenSecretRefKey",
+                  "name": "apiTokenSecretRefName",
+                },
+                "email": "email",
+              },
+            },
+          },
+        ],
+      },
+    },
+  },
+]
+`;

@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`metallb-config Snapshot test 1`] = `
+[
+  {
+    "apiVersion": "metallb.io/v1beta1",
+    "kind": "IPAddressPool",
+    "metadata": {
+      "name": "metallb-config-ipaddresspool-c8fcbc5a",
+      "namespace": "kube-system",
+    },
+    "spec": {
+      "addresses": [
+        "127.0.0.1/8",
+      ],
+    },
+  },
+  {
+    "apiVersion": "metallb.io/v1beta1",
+    "kind": "L2Advertisement",
+    "metadata": {
+      "name": "metallb-config-l2advertisement-c8dc6833",
+      "namespace": "kube-system",
+    },
+    "spec": {
+      "interfaces": [
+        "tailscale0",
+      ],
+      "ipAddressPools": [
+        "metallb-config-ipaddresspool-c8fcbc5a",
+      ],
+    },
+  },
+]
+`;

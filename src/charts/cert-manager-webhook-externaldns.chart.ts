@@ -15,22 +15,41 @@ import {
 import { Certificate, Issuer } from '../imports/cert-manager.io';
 import { ConnectionScheme, Protocol } from 'cdk8s-plus-22';
 
-interface CertManagerWebhookExternalDnsProps extends ChartProps {
+export type CertManagerWebhookExternalDnsConfig = {
     domain: string;
-}
+};
+
+interface CertManagerWebhookExternalDnsProps
+    extends ChartProps,
+        Partial<CertManagerWebhookExternalDnsConfig> {}
 
 export class CertManagerWebhookExternalDns extends Chart {
-    constructor(scope: Construct, id: string, props: Partial<CertManagerWebhookExternalDnsProps>) {
+    constructor(scope: Construct, id: string, props: CertManagerWebhookExternalDnsProps) {
         super(scope, id, props);
 
         const { domain } = parseInputs(props);
 
+        const name = this.labels['chart'] ?? 'externaldns-webhook';
+
+        const serviceAccount = new KubeServiceAccount(this, 'webhook-serviceaccount');
+
+        const service = new KubeService(this, 'service', {
+            spec: {
+                type: 'ClusterIP',
+                ports: [
+                    {
+                        port: 443,
+                        protocol: Protocol.TCP,
+                        name: 'https',
+                    },
+                ],
+                selector: this.labels,
+            },
+        });
+
         new KubeApiService(this, 'KubeApiService', {
             metadata: {
                 name: `v1alpha1.${domain}`,
-                labels: {
-                    app: 'externaldns-webhook',
-                },
                 annotations: {
                     'cert-manager.io/inject-ca-from': 'cert-manager/externaldns-webhook-tls',
                 },
@@ -40,53 +59,53 @@ export class CertManagerWebhookExternalDns extends Chart {
                 groupPriorityMinimum: 1000,
                 versionPriority: 15,
                 version: 'v1alpha1',
-                service: { name: 'externaldns-webhook', namespace: this.namespace! },
+                service: { name: service.name, namespace: this.namespace! },
             },
         });
 
-        new Certificate(this, 'CaCert', {
-            metadata: {
-                name: 'externaldns-webhook-ca',
-                labels: { app: 'externaldns-webhook' },
-            },
+        // Create a selfsigned Issuer, in order to create a root CA certificate for
+        // signing webhook serving certificates
+        const issuerSelfsign = new Issuer(this, 'issuer-webhook-selfsign', {
             spec: {
-                secretName: 'externaldns-webhook-ca',
+                selfSigned: {},
+            },
+        });
+
+        // Create an Issuer that uses the above generated CA certificate to issue certs
+        const issuerCa = new Issuer(this, 'issuer-webhook-ca', {
+            spec: {
+                ca: {
+                    secretName: `${name}-ca`,
+                },
+            },
+        });
+
+        new Certificate(this, 'webhook-ca', {
+            spec: {
+                secretName: `${name}-ca`,
                 duration: '43800h', // 5y
                 issuerRef: {
-                    name: 'externaldns-webhook-selfsign',
+                    name: issuerSelfsign.name,
                 },
-                commonName: 'ca.externaldns-webhook.cert-manager',
+                commonName: `ca.${name}.cert-manager`,
                 isCa: true,
             },
         });
 
-        new KubeDeployment(this, 'Deployment', {
-            metadata: {
-                labels: {
-                    app: 'externaldns-webhook',
-                },
-                name: 'cert-manager-externaldns-webhook',
-            },
+        new KubeDeployment(this, 'webhook-deployment', {
             spec: {
                 replicas: 1,
                 selector: {
-                    matchLabels: {
-                        app: 'externaldns-webhook',
-                    },
+                    matchLabels: this.labels,
                 },
                 template: {
-                    metadata: {
-                        labels: {
-                            app: 'externaldns-webhook',
-                        },
-                    },
                     spec: {
-                        serviceAccountName: 'externaldns-webhook',
+                        serviceAccountName: serviceAccount.name,
                         volumes: [
                             {
                                 name: 'certs',
                                 secret: {
-                                    secretName: 'externaldns-webhook-tls',
+                                    secretName: `${name}-tls`,
                                 },
                             },
                         ],
@@ -139,44 +158,6 @@ export class CertManagerWebhookExternalDns extends Chart {
             },
         });
 
-        // Create a selfsigned Issuer, in order to create a root CA certificate for
-        // signing webhook serving certificates
-        new Issuer(this, 'Issuer-webhook-selfsign', {
-            metadata: {
-                name: 'externaldns-webhook-selfsign',
-                labels: {
-                    app: 'externaldns-webhook',
-                },
-            },
-            spec: {
-                selfSigned: {},
-            },
-        });
-
-        // Create an Issuer that uses the above generated CA certificate to issue certs
-        new Issuer(this, 'Issuer-webhook-ca', {
-            metadata: {
-                name: 'externaldns-webhook-ca',
-                labels: {
-                    app: 'externaldns-webhook',
-                },
-            },
-            spec: {
-                ca: {
-                    secretName: 'externaldns-webhook-ca',
-                },
-            },
-        });
-
-        new KubeServiceAccount(this, 'ServiceAccount', {
-            metadata: {
-                name: 'externaldns-webhook',
-                labels: {
-                    app: 'externaldns-webhook',
-                },
-            },
-        });
-
         // Grant the webhook permission to read the ConfigMap containing the Kubernetes
         // apiserver's requestheader-ca-certificate.
         // This ConfigMap is automatically created by the Kubernetes apiserver.
@@ -184,9 +165,6 @@ export class CertManagerWebhookExternalDns extends Chart {
             metadata: {
                 name: 'externaldns-webhook:webhook-authentication-reader',
                 namespace: 'kube-system',
-                labels: {
-                    app: 'externaldns-webhook',
-                },
             },
             roleRef: {
                 apiGroup: 'rbac.authorization.k8s.io',
@@ -197,7 +175,7 @@ export class CertManagerWebhookExternalDns extends Chart {
                 {
                     apiGroup: '',
                     kind: 'ServiceAccount',
-                    name: 'externaldns-webhook',
+                    name: serviceAccount.name,
                     namespace: this.namespace!,
                 },
             ],
@@ -208,9 +186,6 @@ export class CertManagerWebhookExternalDns extends Chart {
         new KubeClusterRoleBinding(this, 'ClusterRoleBinding', {
             metadata: {
                 name: 'externaldns-webhook:auth-delegator',
-                labels: {
-                    app: 'externaldns-webhook',
-                },
             },
             roleRef: {
                 apiGroup: 'rbac.authorization.k8s.io',
@@ -221,7 +196,7 @@ export class CertManagerWebhookExternalDns extends Chart {
                 {
                     apiGroup: '',
                     kind: 'ServiceAccount',
-                    name: 'externaldns-webhook',
+                    name: serviceAccount.name,
                     namespace: this.namespace!,
                 },
             ],
@@ -230,9 +205,6 @@ export class CertManagerWebhookExternalDns extends Chart {
         new KubeClusterRole(this, 'KubeClusterRole', {
             metadata: {
                 name: 'externaldns-webhook-role',
-                labels: {
-                    app: 'externaldns-webhook',
-                },
             },
             rules: [
                 {
@@ -251,9 +223,6 @@ export class CertManagerWebhookExternalDns extends Chart {
         new KubeClusterRoleBinding(this, 'KubeClusterRoleBinding', {
             metadata: {
                 name: 'externaldns-webhook:flowcontrol',
-                labels: {
-                    app: 'externaldns-webhook',
-                },
             },
             roleRef: {
                 apiGroup: 'rbac.authorization.k8s.io',
@@ -264,7 +233,7 @@ export class CertManagerWebhookExternalDns extends Chart {
                 {
                     apiGroup: '',
                     kind: 'ServiceAccount',
-                    name: 'externaldns-webhook',
+                    name: serviceAccount.name,
                     namespace: this.namespace!,
                 },
             ],
@@ -274,15 +243,12 @@ export class CertManagerWebhookExternalDns extends Chart {
         new Certificate(this, 'Certificate-webhook', {
             metadata: {
                 name: 'externaldns-webhook-tls',
-                labels: {
-                    app: 'externaldns-webhook',
-                },
             },
             spec: {
                 secretName: 'externaldns-webhook-tls',
                 duration: '8760h', // 1y
                 issuerRef: {
-                    name: 'externaldns-webhook-ca',
+                    name: issuerCa.name,
                 },
                 dnsNames: [
                     'externaldns-webhook',
@@ -292,34 +258,12 @@ export class CertManagerWebhookExternalDns extends Chart {
                 ],
             },
         });
-
-        new KubeService(this, 'Service', {
-            metadata: {
-                name: 'externaldns-webhook',
-                labels: {
-                    app: 'externaldns-webhook',
-                },
-            },
-            spec: {
-                type: 'ClusterIP',
-                ports: [
-                    {
-                        port: 443,
-                        protocol: Protocol.TCP,
-                        name: 'https',
-                    },
-                ],
-                selector: {
-                    app: 'externaldns-webhook',
-                },
-            },
-        });
     }
 }
 
 export const parseInputs = (
-    props: Partial<CertManagerWebhookExternalDnsProps>
-): CertManagerWebhookExternalDnsProps => {
+    props: Partial<CertManagerWebhookExternalDnsConfig>
+): CertManagerWebhookExternalDnsConfig => {
     return {
         domain: props.domain ?? 'example.com',
     };

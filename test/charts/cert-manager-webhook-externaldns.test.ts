@@ -1,14 +1,39 @@
 import { App } from 'cdk8s';
-import { CertManagerWebhookExternalDns } from '../../src/charts/cert-manager-webhook-externaldns.chart';
+import {
+    CertManagerWebhookExternalDns,
+    CertManagerWebhookExternalDnsConfig,
+    parseInputs,
+} from '../../src/charts/cert-manager-webhook-externaldns.chart';
 
-describe('Snapshot tests', () => {
-    test('CertManagerWebhookExternalDns', () => {
+const chart = 'cert-mnager-webhook-external-dns';
+
+describe(chart, () => {
+    test('Snapshot test', () => {
         const app = new App();
 
-        const chart = new CertManagerWebhookExternalDns(app, 'CertManagerWebhookExternalDns', {
+        const manifest = new CertManagerWebhookExternalDns(app, chart, {
             namespace: 'cert-manager',
+            labels: {
+                chart,
+            },
         });
 
-        expect(chart).toMatchSnapshot();
+        expect(manifest.toJson()).toMatchSnapshot();
+    });
+});
+
+describe('Unit tests', () => {
+    test('parseInputs function default values', () => {
+        const response = parseInputs({});
+        expect(response.domain).toStrictEqual('example.com');
+    });
+
+    test('parseInputs function with inputs', () => {
+        const inputs: CertManagerWebhookExternalDnsConfig = {
+            domain: 'domain.com',
+        };
+
+        const response = parseInputs(inputs);
+        expect(response.domain).toStrictEqual(inputs.domain);
     });
 });
