@@ -15,14 +15,20 @@ export class CloudflareCertificateIssuer extends Chart {
     constructor(scope: Construct, id: string, props: CloudflareCertificateIssuerProps) {
         super(scope, id, props);
 
-        const { cloudflare } = props;
+        const { cloudflare, environment } = props;
 
-        this.clusterIssuer = new ClusterIssuer(this, 'cloudflare-staging', {
+        let server = 'https://acme-staging-v02.api.letsencrypt.org/directory';
+
+        if (environment === 'production') {
+            server = 'https://acme-v02.api.letsencrypt.org/directory';
+        }
+
+        this.clusterIssuer = new ClusterIssuer(this, `cloudflare-${environment}`, {
             spec: {
                 acme: {
-                    server: 'https://acme-staging-v02.api.letsencrypt.org/directory',
+                    server,
                     privateKeySecretRef: {
-                        name: 'letsencrypt-staging',
+                        name: `letsencrypt-${environment}`,
                     },
                     solvers: [
                         {

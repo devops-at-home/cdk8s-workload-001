@@ -4,7 +4,7 @@ import { CloudflareCertificateIssuer } from '../../src/charts/cloudflare-certifi
 const chart = 'cloudflare-certificate-issuer';
 
 describe(chart, () => {
-    test('Snapshot test', () => {
+    test('Snapshot test staging', () => {
         const app = new App();
 
         const manifest = new CloudflareCertificateIssuer(app, chart, {
@@ -13,6 +13,27 @@ describe(chart, () => {
                 chart,
             },
             environment: 'staging',
+            cloudflare: {
+                apiTokenSecretRef: {
+                    name: 'apiTokenSecretRefName',
+                    key: 'apiTokenSecretRefKey',
+                },
+                email: 'email',
+            },
+        });
+
+        expect(manifest.toJson()).toMatchSnapshot();
+    });
+
+    test('Snapshot test production', () => {
+        const app = new App();
+
+        const manifest = new CloudflareCertificateIssuer(app, chart, {
+            namespace: 'cert-manager',
+            labels: {
+                chart,
+            },
+            environment: 'production',
             cloudflare: {
                 apiTokenSecretRef: {
                     name: 'apiTokenSecretRefName',
